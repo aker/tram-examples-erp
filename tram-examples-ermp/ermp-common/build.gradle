@@ -1,0 +1,17 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.erp.ermp'
+            artifactId 'ermp-common'
+            version '0.1'
+
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile "io.eventuate.tram.core:eventuate-tram-events:$eventuateTramVersion"
+ }
