@@ -19,14 +19,14 @@ kafka:
 
 # ermp:
 ermp-postgres:
-  image: eventuateio/eventuate-tram-postgres:0.6.0.RELEASE
+  image: eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
   ports:
     - 5432:5432
   environment:
     POSTGRES_USER: eventuate
     POSTGRES_PASSWORD: eventuate
 
-ermp-tramcdcservice:
+ermp-cdcservice:
   image: eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
   ports:
     - "8099:8080"

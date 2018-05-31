@@ -27,6 +27,8 @@ public class RoleCommandHandler {
     }
 
     public Message updateRoleName(CommandMessage<UpdateRoleNameCommand> cm) {
+        System.out.println("Handler: updateRoleName");
+
         UpdateRoleNameCommand cmd = cm.getCommand();
         try {
             roleService.updateName(cmd.getRoleId(), cmd.getRoleName());

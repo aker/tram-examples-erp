@@ -16,6 +16,8 @@ public class RoleService {
     private RoleRespository roleRespository;
 
     public Role create(CreateRoleRequest cRoleRequest) {
+        System.out.println("RoleService: create role");
+        
         Role role = new Role(cRoleRequest.getCode(), cRoleRequest.getName());
         role = roleRespository.save(role);
 
