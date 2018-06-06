@@ -1,9 +1,9 @@
 package com.erp.ermp.web;
 
-import com.erp.ermp.domain.CreateRoleRequest;
-import com.erp.ermp.domain.CreateRoleResponse;
-import com.erp.ermp.domain.Role;
-import com.erp.ermp.service.RoleService;
+import com.erp.ermp.backend.role.Role;
+import com.erp.ermp.backend.role.RoleService;
+import com.erp.ermp.common.role.domain.CreateRoleRequest;
+import com.erp.ermp.common.role.domain.CreateRoleResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

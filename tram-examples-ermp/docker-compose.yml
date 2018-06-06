@@ -54,7 +54,7 @@ ermp-cdcservice:
 ermp-service:
   build: ./
   ports:
-    - "8080:8080"
+    - "8081:8081"
   links:
     - ermp-postgres
     - kafka

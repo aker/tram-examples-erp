@@ -1,5 +1,5 @@
 include 'ermp-common'
 include 'ermp-backend'
-include 'ermp-command'
+include 'ermp-handler'
 include 'ermp-service'
 rootProject.name = 'tram-examples-ermp'

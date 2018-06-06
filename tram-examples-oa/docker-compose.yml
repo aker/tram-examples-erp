@@ -19,14 +19,14 @@ kafka:
 
 # oa:    
 oa-postgres:
-  image: aker/tram-erp-postgres
+  image: eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
   ports:
     - 5432:5432
   environment:
-    POSTGRES_USER: oa
-    POSTGRES_PASSWORD: oa
+    POSTGRES_USER: eventuate
+    POSTGRES_PASSWORD: eventuate
 
-oa-tramcdcservice:
+oa-cdcservice:
   image: eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
   ports:
     - "8099:8080"
@@ -35,9 +35,9 @@ oa-tramcdcservice:
     - kafka
     - zookeeper
   environment:
-    SPRING_DATASOURCE_URL: jdbc:postgresql://oa-postgres/oa
-    SPRING_DATASOURCE_USERNAME: oa
-    SPRING_DATASOURCE_PASSWORD: oa
+    SPRING_DATASOURCE_URL: jdbc:postgresql://oa-postgres/eventuate
+    SPRING_DATASOURCE_USERNAME: eventuate
+    SPRING_DATASOURCE_PASSWORD: eventuate
     SPRING_DATASOURCE_TEST_ON_BORROW: "true"
     SPRING_DATASOURCE_VALIDATION_QUERY: SELECT 1
     SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
@@ -54,17 +54,15 @@ oa-tramcdcservice:
 oa-service:
   build: ./
   ports:
-    - "8080:8080"
-  volumes:
-    - ./build/libs:/app
+    - "8082:8082"
   links:
     - oa-postgres
     - kafka
     - zookeeper
   environment:
-    SPRING_DATASOURCE_URL: jdbc:postgresql://oa-postgres/oa
-    SPRING_DATASOURCE_USERNAME: oa
-    SPRING_DATASOURCE_PASSWORD: oa
+    SPRING_DATASOURCE_URL: jdbc:postgresql://oa-postgres/eventuate
+    SPRING_DATASOURCE_USERNAME: eventuate
+    SPRING_DATASOURCE_PASSWORD: eventuate
     SPRING_DATASOURCE_TEST_ON_BORROW: "true"
     SPRING_DATASOURCE_VALIDATION_QUERY: SELECT 1
     SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
