@@ -1,4 +1,4 @@
-package com.erp.apigateway;
+package com.erp.apigateway.test;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;

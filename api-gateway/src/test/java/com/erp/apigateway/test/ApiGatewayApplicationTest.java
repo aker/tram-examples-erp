@@ -1,4 +1,4 @@
-package com.erp.apigateway;
+package com.erp.apigateway.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

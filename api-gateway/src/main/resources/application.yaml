@@ -1,0 +1,52 @@
+spring:
+    application:
+        name: api-gateway
+
+server:
+  port: 8080
+
+auth:
+  service:
+    url: http://localhost:8081
+
+ermp:
+  service:
+    url: http://localhost:8082
+
+workflow:
+  service:
+    url: http://localhost:8083
+
+oa:
+  service:
+    url: http://localhost:9091
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: auth-service
+        uri: ${auth.service.url}
+        predicates:
+          - Path=/login/**
+
+      - id: auth-service2
+        uri: ${auth.service.url}
+        predicates:
+          - Path=/oauth/**
+
+      - id: workflow-service
+        uri: ${workflow.service.url}
+        predicates:
+          - Path=/foos/**
+        filters:
+          - JWTFilter=RSA256,HS256
+          - RemoveResponseHeader=X-Powered-By
+
+      - id: workflow-service2
+        uri: ${workflow.service.url}
+        predicates:
+          - Path=/bars/**
+        filters:
+          - JWTFilter=RSA256,HS256
+          - RemoveResponseHeader=X-Powered-By

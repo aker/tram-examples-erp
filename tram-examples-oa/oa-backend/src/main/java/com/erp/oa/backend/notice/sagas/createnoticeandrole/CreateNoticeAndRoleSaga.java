@@ -1,5 +1,7 @@
 package com.erp.oa.backend.notice.sagas.createnoticeandrole;
 
+import static io.eventuate.tram.commands.consumer.CommandWithDestinationBuilder.send;
+
 import com.erp.ermp.common.role.commands.CreateRoleCommand;
 import com.erp.oa.common.notice.commands.ApproveNoticeCommand;
 import com.erp.oa.common.notice.commands.RejectNoticeCommand;
@@ -7,8 +9,6 @@ import com.erp.oa.common.notice.commands.RejectNoticeCommand;
 import io.eventuate.tram.commands.consumer.CommandWithDestination;
 import io.eventuate.tram.sagas.orchestration.SagaDefinition;
 import io.eventuate.tram.sagas.simpledsl.SimpleSaga;
-
-import static io.eventuate.tram.commands.consumer.CommandWithDestinationBuilder.send;
 
 public class CreateNoticeAndRoleSaga implements SimpleSaga<CreateNoticeAndRoleSagaData> {
 
