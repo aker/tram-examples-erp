@@ -1,0 +1,120 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: zookeeper
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: 10.169.1.236:8123/eventuateio/eventuateio-local-zookeeper:0.17.0.RELEASE
+        ports:
+          - containerPort: 2181
+          - containerPort: 2888
+          - containerPort: 3888
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: zookeeper
+spec:
+  selector:
+    app: zookeeper
+  ports:
+  - name: zookeeper
+    protocol: TCP
+    port: 2181
+    targetPort: 2181
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: eventuate
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eventuate
+    spec:
+      containers:
+      - name: postgres
+        image: 10.169.1.236:8123/eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            value: eventuate
+          - name: POSTGRES_PASSWORD
+            value: eventuate
+
+      - name: kafka
+        image: 10.169.1.236:8123/eventuateio/eventuateio-local-kafka:0.17.0.RELEASE
+        ports:
+          - containerPort: 9092
+        env:
+          - name: ADVERTISED_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KAFKA_HEAP_OPTS
+            value: -Xmx320m -Xms320m
+          - name: ZOOKEEPER_SERVERS
+            value: zookeeper:2181
+
+      - name: cdcservice
+        image: 10.169.1.236:8123/eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
+        ports:
+          - containerPort: 8080
+        env:
+          - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+            value: org.postgresql.Driver
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://localhost/eventuate
+          - name: SPRING_DATASOURCE_USERNAME
+            value: eventuate
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: eventuate
+          - name: SPRING_DATASOURCE_VALIDATION_QUERY
+            value: SELECT 1
+          - name: SPRING_DATASOURCE_TEST_ON_BORROW
+            value: "true"
+          - name: SPRING_PROFILES_ACTIVE
+          - name: EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS
+            value: localhost:9092
+          - name: EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING
+            value: zookeeper:2181
+          - name: EVENTUATELOCAL_CDC_POLLING_INTERVAL_IN_MILLISECONDS
+            value: 500
+          - name: EVENTUATELOCAL_CDC_MAX_EVENTS_PER_POLLING
+            value: 1000
+          - name: EVENTUATELOCAL_CDC_MAX_ATTEMPTS_FOR_POLLING
+            value: 100
+          - name: EVENTUATELOCAL_CDC_POLLING_RETRY_INTERVAL_IN_MILLISECONDS
+            value: 500
+          - name: EVENTUATELOCAL_CDC_BINLOG_CLIENT_ID
+            value: 1234567890
+          - name: EVENTUATELOCAL_CDC_SOURCE_TABLE_NAME
+            value: message
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: eventuate-service
+spec:
+  selector:
+    app: eventuate
+  ports:
+  - name: kafka
+    protocol: TCP
+    port: 9092
+    targetPort: 9092
+  - name: postgres
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
