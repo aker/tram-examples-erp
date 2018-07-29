@@ -1,0 +1,117 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: ermp
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ermp
+    spec:
+       containers:
+       - name: ermp-service
+         image: 10.169.1.236:8123/aker/tram-examples-ermp
+         ports:
+           - containerPort: 8082
+         env:
+           - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+             value: org.postgresql.Driver
+           - name: SPRING_DATASOURCE_URL
+             value: jdbc:postgresql://eventuate-service/eventuate
+           - name: SPRING_DATASOURCE_USERNAME
+             value: eventuate
+           - name: SPRING_DATASOURCE_PASSWORD
+             value: eventuate
+           - name: SPRING_DATASOURCE_VALIDATION_QUERY
+             value: SELECT 1
+           - name: SPRING_DATASOURCE_TEST_ON_BORROW
+             value: "true"
+           - name: EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS
+             value: eventuate-service:9092
+           - name: EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING
+             value: zookeeper:2181
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ermp-service
+spec:
+  selector:
+    app: ermp-service
+  ports:
+  - name: ermp-service
+    protocol: TCP
+    port: 8082
+    targetPort: 8082
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+       containers:
+       - name: api-gateway
+         image: 10.169.1.236:8123/aker/auth-service
+         ports:
+           - containerPort: 8081
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+  - name: auth-service
+    protocol: TCP
+    port: 8081
+    targetPort: 8081
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+       containers:
+       - name: api-gateway
+         image: 10.169.1.236:8123/aker/api-gateway
+         ports:
+           - containerPort: 8080
+         env:
+           - name: AUTH_SERVICE_URL
+             value: http://auth-service:8081
+           - name: ERMP_SERVICE_URL
+             value: http://ermp-service:8082
+           - name: WORKFLOW_SERVICE_URL
+             value: http://workflow-service:8083
+           - name: OA_SERVICE_URL
+             value: http://oa-service:9091
+           - name: JAVA_OPTS
+             value: -Xmx192m
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    app: api-gateway
+  ports:
+  - name: api-gateway
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
