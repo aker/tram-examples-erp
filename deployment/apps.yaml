@@ -27,3 +27,33 @@ spec:
     protocol: TCP
     port: 8083
     targetPort: 8083
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: oa-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: oa-service
+    spec:
+       containers:
+       - name: oa-service
+         image: 10.169.1.236:8123/aker/tram-examples-oa
+         ports:
+           - containerPort: 8082
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: oa-service
+spec:
+  selector:
+    app: oa-service
+  ports:
+  - name: oa-service
+    protocol: TCP
+    port: 9091
+    targetPort: 8082
