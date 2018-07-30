@@ -57,7 +57,7 @@ spec:
         app: auth-service
     spec:
        containers:
-       - name: api-gateway
+       - name: auth-service
          image: 10.169.1.236:8123/aker/auth-service
          ports:
            - containerPort: 8081
