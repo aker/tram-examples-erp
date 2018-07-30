@@ -33,6 +33,41 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: 10.169.1.236:8123/eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            value: eventuate
+          - name: POSTGRES_PASSWORD
+            value: eventuate
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+  - name: postgres
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
   name: kafka
 spec:
   replicas: 1
@@ -55,41 +90,6 @@ spec:
             value: -Xmx320m -Xms320m
           - name: ZOOKEEPER_SERVERS
             value: zookeeper:2181
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: kafka
-spec:
-  selector:
-    app: kafka
-  ports:
-  - name: kafka
-    protocol: TCP
-    port: 9092
-    targetPort: 9092
----
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: postgres
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-      - name: postgres
-        image: 10.169.1.236:8123/eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
-        ports:
-          - containerPort: 5432
-        env:
-          - name: POSTGRES_USER
-            value: eventuate
-          - name: POSTGRES_PASSWORD
-            value: eventuate
       - name: cdcservice
         image: 10.169.1.236:8123/eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
         ports:
@@ -98,7 +98,7 @@ spec:
           - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
             value: org.postgresql.Driver
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://localhost/eventuate
+            value: jdbc:postgresql://postgres/eventuate
           - name: SPRING_DATASOURCE_USERNAME
             value: eventuate
           - name: SPRING_DATASOURCE_PASSWORD
@@ -128,14 +128,12 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: postgres
+  name: kafka
 spec:
   selector:
-    app: postgres
+    app: kafka
   ports:
-  - name: postgres
+  - name: kafka
     protocol: TCP
-    port: 5432
-    targetPort: 5432
-
-
+    port: 9092
+    targetPort: 9092
