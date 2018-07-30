@@ -1,0 +1,29 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: workflow-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workflow-service
+    spec:
+       containers:
+       - name: workflow-service
+         image: 10.169.1.236:8123/aker/tram-examples-workflow
+         ports:
+           - containerPort: 8083
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: workflow-service
+spec:
+  selector:
+    app: workflow-service
+  ports:
+  - name: workflow-service
+    protocol: TCP
+    port: 8083
+    targetPort: 8083
