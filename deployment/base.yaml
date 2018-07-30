@@ -29,30 +29,19 @@ spec:
     protocol: TCP
     port: 2181
     targetPort: 2181
-
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: eventuate
+  name: kafka
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: eventuate
+        app: kafka
     spec:
       containers:
-      - name: postgres
-        image: 10.169.1.236:8123/eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
-        ports:
-          - containerPort: 5432
-        env:
-          - name: POSTGRES_USER
-            value: eventuate
-          - name: POSTGRES_PASSWORD
-            value: eventuate
-
       - name: kafka
         image: 10.169.1.236:8123/eventuateio/eventuateio-local-kafka:0.17.0.RELEASE
         ports:
@@ -66,7 +55,41 @@ spec:
             value: -Xmx320m -Xms320m
           - name: ZOOKEEPER_SERVERS
             value: zookeeper:2181
-
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka
+spec:
+  selector:
+    app: kafka
+  ports:
+  - name: kafka
+    protocol: TCP
+    port: 9092
+    targetPort: 9092
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: 10.169.1.236:8123/eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            value: eventuate
+          - name: POSTGRES_PASSWORD
+            value: eventuate
       - name: cdcservice
         image: 10.169.1.236:8123/eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
         ports:
@@ -86,7 +109,7 @@ spec:
             value: "true"
           - name: SPRING_PROFILES_ACTIVE
           - name: EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS
-            value: localhost:9092
+            value: kafka:9092
           - name: EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING
             value: zookeeper:2181
           - name: EVENTUATELOCAL_CDC_POLLING_INTERVAL_IN_MILLISECONDS
@@ -105,15 +128,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: eventuate-service
+  name: postgres
 spec:
   selector:
-    app: eventuate
+    app: postgres
   ports:
-  - name: kafka
-    protocol: TCP
-    port: 9092
-    targetPort: 9092
   - name: postgres
     protocol: TCP
     port: 5432

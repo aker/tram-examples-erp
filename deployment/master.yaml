@@ -18,7 +18,7 @@ spec:
            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
              value: org.postgresql.Driver
            - name: SPRING_DATASOURCE_URL
-             value: jdbc:postgresql://eventuate-service/eventuate
+             value: jdbc:postgresql://postgres/eventuate
            - name: SPRING_DATASOURCE_USERNAME
              value: eventuate
            - name: SPRING_DATASOURCE_PASSWORD
@@ -28,7 +28,7 @@ spec:
            - name: SPRING_DATASOURCE_TEST_ON_BORROW
              value: "true"
            - name: EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS
-             value: eventuate-service:9092
+             value: kafka:9092
            - name: EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING
              value: zookeeper:2181
 ---
