@@ -44,6 +44,23 @@ spec:
          image: 10.169.1.236:8123/aker/tram-examples-oa
          ports:
            - containerPort: 8082
+         env:
+           - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+             value: org.postgresql.Driver
+           - name: SPRING_DATASOURCE_URL
+             value: jdbc:postgresql://eventuate-service/eventuate
+           - name: SPRING_DATASOURCE_USERNAME
+             value: eventuate
+           - name: SPRING_DATASOURCE_PASSWORD
+             value: eventuate
+           - name: SPRING_DATASOURCE_TEST_ON_BORROW
+             value: "true"
+           - name: SPRING_DATASOURCE_VALIDATION_QUERY
+             value: SELECT 1
+           - name: EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS
+             value: eventuate-service:9092
+           - name: EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING
+             value: zookeeper:2181
 ---
 kind: Service
 apiVersion: v1
@@ -55,5 +72,5 @@ spec:
   ports:
   - name: oa-service
     protocol: TCP
-    port: 9091
-    targetPort: 8082
+    port: 8082
+    targetPort: 9091
