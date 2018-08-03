@@ -1,6 +1,5 @@
 # ERP example application
 
-
 This example demonstrates how to develop microservices with Spring Boot, JPA, Apache Kafka, ElasticSearch and the Eventuate Tram framework.
 
 # Building and running
@@ -11,13 +10,16 @@ You just need to have Java 8 installed.
 First, build the application
 
 ```
-./gradlew assemble
+./gradlew-assemble-all.sh
 ```
-
-Next, launch the services using [Docker Compose](https://docs.docker.com/compose/):
-
+Next, set 'DOCKER_HOST_IP' an host IP address
 ```
 export DOCKER_HOST_IP=...
+```
+
+Last, launch the services using [Docker Compose](https://docs.docker.com/compose/):
+
+```
 docker-compose build
 docker-compose up -d
 ```
@@ -31,6 +33,6 @@ See this [guide to setting `DOCKER_HOST_IP`](http://eventuate.io/docs/usingdocke
 
 # Using the application
 
-Once the application has started, you can use the application via the Swagger UI.
+Once the application has started, you can use the application via Brower.
 
-* `http://${DOCKER_HOST_IP}:8080/swagger-ui.html` - the monolithic application
+* `http://${DOCKER_HOST_IP}:8080/login`
