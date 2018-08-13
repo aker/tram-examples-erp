@@ -4,17 +4,17 @@ services:
   # base:
   zookeeper:
     image: eventuateio/eventuateio-local-zookeeper:0.17.0.RELEASE
+    network_mode: "host"
     ports:
       - 2181:2181
       - 2888:2888
       - 3888:3888
-    network_mode: "host"
 
   kafka:
     image: eventuateio/eventuateio-local-kafka:0.17.0.RELEASE
+    network_mode: "host"
     ports:
       - 9092:9092
-    network_mode: "host"
     environment:
       - ADVERTISED_HOST_NAME=${DOCKER_HOST_IP}
       - KAFKA_HEAP_OPTS=-Xmx320m -Xms320m
@@ -22,18 +22,18 @@ services:
 
   postgres:
     image: eventuateio/eventuate-tram-sagas-postgres:0.5.0.RELEASE
+    network_mode: "host"
     ports:
       - 5432:5432
-    network_mode: "host"
     environment:
       POSTGRES_USER: eventuate
       POSTGRES_PASSWORD: eventuate
 
   cdcservice:
     image: eventuateio/eventuate-tram-cdc-mysql-service:0.6.0.RELEASE
+    network_mode: "host"
     ports:
       - "8099:8080"
-    network_mode: "host"
     environment:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_URL: jdbc:postgresql://${DOCKER_HOST_IP}/eventuate
@@ -54,9 +54,9 @@ services:
   ermp-service:
     build: ./
     image: aker/tram-examples-ermp
+    network_mode: "host"
     ports:
       - "8082:8082"
-    network_mode: "host"
     environment:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_URL: jdbc:postgresql://${DOCKER_HOST_IP}/eventuate
