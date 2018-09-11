@@ -14,8 +14,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class ClientCredentialsTest {
-    public final static String AUTH_SERVER = "http://localhost:8081";
-    public final static String RESOURCE_SERVER = "http://localhost:8083";
+    public final static String AUTH_SERVER = "http://localhost:8181";
+    public final static String RESOURCE_SERVER = "http://localhost:8281";
 
 
     @Test

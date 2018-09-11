@@ -14,16 +14,18 @@ import org.springframework.http.MediaType;
 //Before running this live test make sure both authorization server and first resource server are running   
 
 public class PasswordFlowLiveTest {
+    public final static String AUTH_SERVER = "http://localhost:8181";
+    public final static String RESOURCE_SERVER = "http://localhost:8281";
 
     @Test
     public void givenUser_whenUseFooClient_thenOkForFooResourceOnly() {
         final String accessToken = obtainAccessToken("fooClientIdPassword", "john", "123");
 
-        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/foos/1");
+        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/foos/1");
         assertEquals(200, fooResponse.getStatusCode());
         assertNotNull(fooResponse.jsonPath().get("name"));
 
-        final Response barResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/bars/1");
+        final Response barResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/bars/1");
         assertEquals(403, barResponse.getStatusCode());
     }
 
@@ -31,14 +33,14 @@ public class PasswordFlowLiveTest {
     public void givenUser_whenUseBarClient_thenOkForBarResourceReadOnly() {
         final String accessToken = obtainAccessToken("barClientIdPassword", "john", "123");
 
-        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/foos/1");
+        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/foos/1");
         assertEquals(403, fooResponse.getStatusCode());
 
-        final Response barReadResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/bars/1");
+        final Response barReadResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/bars/1");
         assertEquals(200, barReadResponse.getStatusCode());
         assertNotNull(barReadResponse.jsonPath().get("name"));
 
-        final Response barWritResponse = RestAssured.given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + accessToken).body("{\"id\":1,\"name\":\"MyBar\"}").post("http://localhost:8083/bars");
+        final Response barWritResponse = RestAssured.given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + accessToken).body("{\"id\":1,\"name\":\"MyBar\"}").post(RESOURCE_SERVER + "/bars");
         assertEquals(403, barWritResponse.getStatusCode());
     }
 
@@ -46,14 +48,14 @@ public class PasswordFlowLiveTest {
     public void givenAdmin_whenUseBarClient_thenOkForBarResourceReadWrite() {
         final String accessToken = obtainAccessToken("barClientIdPassword", "tom", "111");
 
-        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/foos/1");
+        final Response fooResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/foos/1");
         assertEquals(403, fooResponse.getStatusCode());
 
-        final Response barResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get("http://localhost:8083/bars/1");
+        final Response barResponse = RestAssured.given().header("Authorization", "Bearer " + accessToken).get(RESOURCE_SERVER + "/bars/1");
         assertEquals(200, barResponse.getStatusCode());
         assertNotNull(barResponse.jsonPath().get("name"));
 
-        final Response barWritResponse = RestAssured.given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + accessToken).body("{\"id\":1,\"name\":\"MyBar\"}").post("http://localhost:8083/bars");
+        final Response barWritResponse = RestAssured.given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + accessToken).body("{\"id\":1,\"name\":\"MyBar\"}").post(RESOURCE_SERVER + "/bars");
         assertEquals(201, barWritResponse.getStatusCode());
         assertEquals("MyBar", barWritResponse.jsonPath().get("name"));
     }
@@ -66,7 +68,7 @@ public class PasswordFlowLiveTest {
         params.put("client_id", clientId);
         params.put("username", username);
         params.put("password", password);
-        final Response response = RestAssured.given().auth().preemptive().basic(clientId, "secret").and().with().params(params).when().post("http://localhost:8081/oauth/token");
+        final Response response = RestAssured.given().auth().preemptive().basic(clientId, "secret").and().with().params(params).when().post( AUTH_SERVER + "/oauth/token");
         return response.jsonPath().getString("access_token");
     }
 

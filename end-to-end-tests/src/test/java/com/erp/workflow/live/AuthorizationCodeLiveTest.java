@@ -15,8 +15,8 @@ import org.springframework.http.HttpStatus;
 //Before running this live test make sure both authorization server and first resource server are running   
 
 public class AuthorizationCodeLiveTest {
-    public final static String AUTH_SERVER = "http://localhost:8081";
-    public final static String RESOURCE_SERVER = "http://localhost:8083";
+    public final static String AUTH_SERVER = "http://localhost:8181";
+    public final static String RESOURCE_SERVER = "http://localhost:8281";
 
     @Test
     public void givenUser_whenUseFooClient_thenOkForFooResourceOnly() {

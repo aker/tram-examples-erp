@@ -1,3 +1,17 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.erp.ermp'
+            artifactId 'ermp-backend'
+            version '0.1'
+
+            from components.java
+        }
+    }
+}
+
 dependencies {
     compile (project(":ermp-common")) {
         exclude group: "io.eventuate.tram.core", module: "eventuate-tram-events"
