@@ -1,5 +1,5 @@
 dependencies {
-    compile project(":oa-handler")
+    compile project(":oa-backend")
     compile "com.erp.ermp:ermp-backend:0.1"
     compile "com.erp.ermp:ermp-handler:0.1"
 

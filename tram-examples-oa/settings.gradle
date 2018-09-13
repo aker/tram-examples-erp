@@ -1,6 +1,5 @@
 include 'oa-common'
 include 'oa-backend'
-include 'oa-handler'
 include 'oa-service'
 include 'oa-integration-tests'
 rootProject.name = 'tram-examples-oa'
